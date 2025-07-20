@@ -1,0 +1,167 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    background-color: #0a0a0a;
+    font-family: 'Courier New', 'Lucida Console', monospace;
+    font-size: 24px;
+    color: #00ff00;
+    overflow: hidden;
+}
+
+/* Claude Code-style colors */
+.text-green { color: #00ff41; }
+.text-cyan { color: #00ffff; }
+.text-yellow { color: #ffff00; }
+.text-red { color: #ff4444; }
+.text-orange { color: #ff8800; }
+.text-blue { color: #4488ff; }
+.text-purple { color: #aa44ff; }
+.text-gray { color: #888888; }
+.text-white { color: #ffffff; }
+
+.bg-dark-green { background-color: #001a00; }
+.bg-dark-red { background-color: #1a0000; }
+.bg-dark-yellow { background-color: #1a1a00; }
+.bg-dark-blue { background-color: #000011; }
+
+/* Status indicators */
+.status-online { color: #00ff41; }
+.status-offline { color: #ff4444; }
+.status-warning { color: #ffff00; }
+.status-critical { color: #ff0000; }
+
+/* Mission display styles */
+.mission-box {
+    border: 1px solid #00ff41;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #001100;
+}
+
+.progress-bar {
+    background-color: #333;
+    border: 1px solid #00ff41;
+    height: 20px;
+    margin: 5px 0;
+}
+
+.progress-fill {
+    background-color: #00ff41;
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+#terminal {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    background-color: #000;
+    border: 2px solid #00ff00;
+    box-sizing: border-box;
+}
+
+#keyboard-legend {
+    background-color: #001100;
+    border-bottom: 1px solid #00ff00;
+    padding: 10px;
+    min-height: 80px;
+}
+
+.legend-title {
+    text-align: center;
+    margin-bottom: 8px;
+    color: #00ff00;
+    font-weight: bold;
+}
+
+.legend-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    text-align: center;
+}
+
+.legend-item {
+    font-size: 13px;
+    color: #00aa00;
+}
+
+#game-screen {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#output {
+    flex: 1;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    line-height: 1.4;
+    margin-bottom: 10px;
+}
+
+#output::-webkit-scrollbar {
+    width: 8px;
+}
+
+#output::-webkit-scrollbar-track {
+    background: #000;
+}
+
+#output::-webkit-scrollbar-thumb {
+    background: #00ff00;
+}
+
+#prompt-line {
+    display: flex;
+    align-items: center;
+    min-height: 20px;
+}
+
+#prompt {
+    color: #00ff00;
+    margin-right: 5px;
+}
+
+#cursor {
+    animation: blink 1s infinite;
+    color: #00ff00;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+.command-output {
+    margin: 5px 0;
+}
+
+.error {
+    color: #ff0000;
+}
+
+.success {
+    color: #ffff00;
+}
+
+.system {
+    color: #00aaaa;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
