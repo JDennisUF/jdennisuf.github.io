@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "icdiags_blazor",
   "resources": {
-    "hash": "sha256-ObtOf75pSwl4vvP99EaRvhsm4coI7mYPDk/ZewgSsn0=",
+    "hash": "sha256-YeSLvjSXvfnTMhf7xKFIpP8oA65sojXX1rUyXedyvRk=",
     "jsModuleNative": {
       "dotnet.native.8.0.17.tqf1it4626.js": "sha256-YyxJV6dv935qHoQAmjB+2qRjHeGpm4SyWxE0T/KvsIE="
     },
@@ -20,9 +20,9 @@
       "AWSSDK.Core.wasm": "sha256-TZ8IQKfj/3zdU5hmZ7YwqwOwwkEbd5spsMT/SEwz0Ik=",
       "AWSSDK.TranscribeService.wasm": "sha256-5hVuS5Qg7KDWNtNO6EfFFi9O9ZEsMb4SHaqzCOcFfZs=",
       "icdiags_ai.wasm": "sha256-nzHb7eCxYce8+CtzTMVtUjz5mzmM7qQYgcN3OAh8rjY=",
-      "icdiags_blazor.wasm": "sha256-vel0aGRTiBlZFhHkN7uD07j3rla4nWGLHIblw+XbeHA=",
+      "icdiags_blazor.wasm": "sha256-8ojxrTZ+r1uPxcdmsj5j/EprnryMly+imWj6sBIrNFI=",
       "icdiags_data.wasm": "sha256-oAlq7jm8wMQnSb2tBy0pqPeU7GN9pwnRge1oVNMO758=",
-      "Microsoft.AspNetCore.Components.wasm": "sha256-O9hxgPSYV3Ap2Q79N4d9loXpdBUJ0FSP050cxcsRSRQ=",
+      "Microsoft.AspNetCore.Components.wasm": "sha256-pFbpORU13Yss1yoVivENPZWlPtFCxRdnVQ5xiYF4Pow=",
       "Microsoft.AspNetCore.Components.Web.wasm": "sha256-loiGQahknYEqj84+KRbLCT58mbsv8dgXjZR3knNLYh0=",
       "Microsoft.AspNetCore.Components.WebAssembly.wasm": "sha256-SJout8FuOo8mYmSg48oF2LhxrN+RMbug+BkPTDQnRDE=",
       "Microsoft.Data.Sqlite.wasm": "sha256-8bc0ULEYri9U58nurNsfRUWKWXFPw8KJKBRN4XjV5kI=",
