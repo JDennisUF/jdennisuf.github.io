@@ -11,13 +11,157 @@ class TextAdventure {
             gameStarted: false,
             currentMission: null,
             completedMissions: [],
-            mainMissionUnlocked: false
+            mainMissionUnlocked: false,
+            visitedRooms: new Set()
         };
         this.worldMap = new Map(); // Persistent world storage
         this.nextLocationId = 1;
         
         this.setupKeyboardListeners();
         this.initialize();
+    }
+
+    initializeMap() {
+        // Map rooms based on their actual directional connections
+        // Start from room 1 (entrance) and map spatially
+        this.roomPositions = {};
+        this.calculateRoomPositions();
+        this.createMapGrid();
+    }
+    
+    calculateRoomPositions() {
+        // Start mapping from entrance (room 1) at center of larger grid
+        const visited = new Set();
+        const queue = [{id: 1, x: 12, y: 12}]; // Start at center-bottom of 25x15 grid
+        
+        while (queue.length > 0) {
+            const {id, x, y} = queue.shift();
+            
+            if (visited.has(id)) continue;
+            visited.add(id);
+            
+            this.roomPositions[id] = {x, y};
+            
+            // Get room connections and map adjacent rooms
+            if (this.worldMap.has(id)) {
+                const room = this.worldMap.get(id);
+                const connections = room.connections;
+                
+                // Process connections in a consistent order for predictable mapping
+                const orderedDirections = ['north', 'east', 'south', 'west'];
+                
+                for (const direction of orderedDirections) {
+                    const connectedId = connections[direction];
+                    if (connectedId && !visited.has(connectedId) && !queue.find(item => item.id === connectedId)) {
+                        let newX = x, newY = y;
+                        
+                        switch(direction) {
+                            case 'north': newY = y - 1; break;
+                            case 'south': newY = y + 1; break;
+                            case 'east': newX = x + 1; break;
+                            case 'west': newX = x - 1; break;
+                        }
+                        
+                        // Make sure coordinates are within our 25x15 grid
+                        if (newX >= 0 && newX < 25 && newY >= 0 && newY < 15) {
+                            // Check if position is already occupied
+                            const occupied = Object.values(this.roomPositions).some(pos => pos.x === newX && pos.y === newY);
+                            if (!occupied) {
+                                queue.push({id: connectedId, x: newX, y: newY});
+                            } else {
+                                // If position is occupied, try to find a nearby empty spot systematically
+                                let foundSpot = false;
+                                for (let distance = 1; distance <= 3 && !foundSpot; distance++) {
+                                    for (let offsetY = -distance; offsetY <= distance && !foundSpot; offsetY++) {
+                                        for (let offsetX = -distance; offsetX <= distance && !foundSpot; offsetX++) {
+                                            if (Math.abs(offsetX) + Math.abs(offsetY) !== distance) continue;
+                                            
+                                            const tryX = newX + offsetX;
+                                            const tryY = newY + offsetY;
+                                            if (tryX >= 0 && tryX < 25 && tryY >= 0 && tryY < 15) {
+                                                const stillOccupied = Object.values(this.roomPositions).some(pos => pos.x === tryX && pos.y === tryY);
+                                                if (!stillOccupied) {
+                                                    queue.push({id: connectedId, x: tryX, y: tryY});
+                                                    foundSpot = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    createMapGrid() {
+        const mapGrid = document.getElementById('map-grid');
+        mapGrid.innerHTML = '';
+        
+        // Create cells in a 25x15 grid - all start empty
+        for (let y = 0; y < 15; y++) {
+            for (let x = 0; x < 25; x++) {
+                const cell = document.createElement('div');
+                cell.className = 'map-cell';
+                cell.id = `map-cell-${x}-${y}`;
+                
+                // Find which room is in this position
+                const roomId = this.getRoomAtPosition(x, y);
+                if (roomId) {
+                    cell.dataset.roomId = roomId;
+                    // Don't show room number - leave blank until visited
+                } else {
+                    cell.style.visibility = 'hidden';
+                }
+                
+                mapGrid.appendChild(cell);
+            }
+        }
+    }
+    
+    getRoomAtPosition(x, y) {
+        for (const [roomId, pos] of Object.entries(this.roomPositions)) {
+            if (pos.x === x && pos.y === y) {
+                return parseInt(roomId);
+            }
+        }
+        return null;
+    }
+    
+    updateMap() {
+        // Clear all current highlighting
+        document.querySelectorAll('.map-cell').forEach(cell => {
+            cell.classList.remove('current', 'visited');
+            cell.textContent = ''; // Clear any content
+        });
+        
+        // Mark visited rooms with a marker
+        this.gameState.visitedRooms.forEach(roomId => {
+            const pos = this.roomPositions[roomId];
+            if (pos) {
+                const cell = document.getElementById(`map-cell-${pos.x}-${pos.y}`);
+                if (cell && roomId !== this.gameState.currentLocationId) {
+                    cell.classList.add('visited');
+                    cell.textContent = '●'; // Mark visited rooms
+                }
+            }
+        });
+        
+        // Mark current room with player icon
+        const currentPos = this.roomPositions[this.gameState.currentLocationId];
+        if (currentPos) {
+            const currentCell = document.getElementById(`map-cell-${currentPos.x}-${currentPos.y}`);
+            if (currentCell) {
+                currentCell.classList.add('current');
+                currentCell.textContent = '🧑'; // Cute player icon
+            }
+        } else {
+            // Debug: log when player position is not found
+            console.log(`Player position not found for room ${this.gameState.currentLocationId}`);
+            console.log('Available room positions:', this.roomPositions);
+        }
     }
 
     initialize() {
@@ -96,14 +240,24 @@ class TextAdventure {
                 this.showHelp();
                 break;
             case 'm':
+                console.log('M key pressed - showing mission status');
                 this.showMissionStatus();
                 break;
             case 'escape':
                 this.showMenu();
                 break;
             default:
+                console.log('Default case triggered for key:', key);
                 if (/^[a-z]$/.test(key)) {
-                    this.executeAction(key);
+                    // Special UI commands go to their own handlers, everything else goes to executeAction
+                    if (['i', 'l', 'h', 'm'].includes(key)) {
+                        console.log('Key ignored in default case (has specific handler):', key);
+                    } else {
+                        console.log('Executing action for key:', key);
+                        this.executeAction(key);
+                    }
+                } else {
+                    console.log('Non-letter key ignored:', key);
                 }
                 break;
         }
@@ -130,17 +284,22 @@ class TextAdventure {
     
     First priority: establish power and communication links.
     
-    Use arrow keys to move, G to get items, L to look around.
+    Use arrow keys to move, T to take items, L to look around.
     Find data pads for mission briefings.
     `, 30);
             
             // Generate the entire facility map at game start
             this.generateFacilityMap();
             this.gameState.currentLocationId = 1; // Start at entrance
+            this.gameState.visitedRooms.add(1); // Mark starting room as visited
+            
+            // Now that worldMap is generated, initialize the visual map
+            this.initializeMap();
             
             setTimeout(() => {
                 this.lookAround();
                 this.showMissionStatus();
+                this.updateMap(); // Initialize map display
             }, 3000);
         }, 2000);
     }
@@ -217,10 +376,14 @@ class TextAdventure {
             const oppositeDir = this.getOppositeDirection(conn.dir);
             
             fromLoc.connections[conn.dir] = conn.to;
-            fromLoc.exits.push(conn.dir);
+            if (!fromLoc.exits.includes(conn.dir)) {
+                fromLoc.exits.push(conn.dir);
+            }
             
             toLoc.connections[oppositeDir] = conn.from;
-            toLoc.exits.push(oppositeDir);
+            if (!toLoc.exits.includes(oppositeDir)) {
+                toLoc.exits.push(oppositeDir);
+            }
         });
     }
 
@@ -376,16 +539,13 @@ class TextAdventure {
                 this.move(action);
                 break;
             case 'use':
-                this.typeText("\nWhat would you like to use? (Press a letter for items)", 20);
+                this.typeText("\nWhat would you like to use? (Press a letter for items)");
                 break;
-            case 'g':
+            case 't':
                 this.takeItem();
                 break;
             case 'd':
                 this.dropItem();
-                break;
-            case 'x':
-                this.examine();
                 break;
             default:
                 this.tryQuickAction(action);
@@ -424,31 +584,16 @@ class TextAdventure {
         this.typeText(`\nYou drop the ${item}.`, 20);
     }
 
-    examine() {
-        this.typeText("\nYou examine your surroundings more closely...", 30);
-        setTimeout(() => {
-            this.lookAround();
-            this.checkForSecrets();
-        }, 1000);
-    }
 
-    checkForSecrets() {
-        if (Math.random() < 0.3) {
-            const secrets = [
-                "You notice scratch marks on the wall.",
-                "There's a hidden panel behind some equipment.",
-                "You find a torn piece of paper with partial text.",
-                "Something glints in the shadows.",
-                "You hear a faint mechanical humming."
-            ];
-            const secret = secrets[Math.floor(Math.random() * secrets.length)];
-            this.typeText(`\n${secret}`, 20);
-        }
-    }
 
     tryQuickAction(action) {
+        // Don't allow quick actions for reserved command keys
+        if (['i', 'l', 'h', 'm', 't', 'd'].includes(action)) {
+            return; // These are handled by specific key handlers or executeAction
+        }
+        
         if (this.gameState.inventory.length === 0) {
-            this.typeText(`\nYou don't have anything to use with '${action.toUpperCase()}'.`, 20);
+            this.typeText(`\nYou don't have anything to use with '${action.toUpperCase()}'.`);
             return;
         }
         
@@ -457,7 +602,7 @@ class TextAdventure {
             const item = this.gameState.inventory[itemIndex];
             this.useItem(item);
         } else {
-            this.typeText(`\nYou try '${action.toUpperCase()}' but nothing happens.`, 20);
+            this.typeText(`\nYou try '${action.toUpperCase()}' but nothing happens.`);
         }
     }
 
@@ -497,19 +642,32 @@ class TextAdventure {
                           mission.status === "URGENT" ? "text-orange" :
                           mission.status === "HIGH PRIORITY" ? "text-yellow" : "text-cyan";
         
+        // Calculate proper spacing for 68-character width content
+        const missionText = `MISSION: ${mission.title}`;
+        const statusText = `STATUS:  ${mission.status}`;
+        const objectiveText = `OBJECTIVE: ${mission.objective}`;
+        const rewardText = `REWARD: ${mission.reward}`;
+        
+        // Ensure spacing calculations don't go negative
+        const missionSpacing = Math.max(0, 66 - missionText.length);
+        const statusSpacing = Math.max(0, 66 - statusText.length);
+        const descriptionSpacing = Math.max(0, 66 - mission.description.length);
+        const objectiveSpacing = Math.max(0, 66 - objectiveText.length);
+        const rewardSpacing = Math.max(0, 66 - rewardText.length);
+        
         this.typeColoredText(`
     ╔══════════════════════════════════════════════════════════════════════╗
     ║                         ${mission.icon} MISSION BRIEFING ${mission.icon}                        ║
     ╠══════════════════════════════════════════════════════════════════════╣
-    ║  MISSION: ${mission.title.padEnd(55)} ║
-    ║  STATUS:  ${mission.status.padEnd(55)} ║
-    ║                                                                      ║
-    ║  ${mission.description.padEnd(66)} ║
-    ║                                                                      ║
-    ║  OBJECTIVE: ${mission.objective.padEnd(53)} ║
-    ║  REWARD: ${mission.reward.padEnd(56)} ║
+    ║  ${missionText}${' '.repeat(missionSpacing)} ║
+    ║  ${statusText}${' '.repeat(statusSpacing)} ║
+    ║${' '.repeat(68)}║
+    ║  ${mission.description}${' '.repeat(descriptionSpacing)} ║
+    ║${' '.repeat(68)}║
+    ║  ${objectiveText}${' '.repeat(objectiveSpacing)} ║
+    ║  ${rewardText}${' '.repeat(rewardSpacing)} ║
     ╚══════════════════════════════════════════════════════════════════════╝
-        `, statusColor, 30);
+        `, statusColor);
     }
 
     generateMission() {
@@ -591,15 +749,18 @@ class TextAdventure {
     }
 
     checkMissionProgress(item) {
-        if (!this.gameState.currentMission) return;
+        // Generate mission if we don't have one yet
+        if (!this.gameState.currentMission) {
+            this.generateMission();
+        }
         
         const mission = this.gameState.currentMission;
-        if (mission.type === "collection" && item === mission.target) {
+        if (mission && (mission.type === "collection" || mission.type === "action") && item === mission.target) {
             const count = this.gameState.inventory.filter(i => i === mission.target).length;
             if (count >= mission.requiredCount) {
                 this.completeMission();
             } else {
-                this.typeText(`\nMission progress: ${count}/${mission.requiredCount} ${mission.target}s collected.`, 20);
+                this.typeText(`\nMission progress: ${count}/${mission.requiredCount} ${mission.target}s collected.`);
             }
         }
     }
@@ -622,6 +783,9 @@ class TextAdventure {
         this.gameState.score += 100;
         this.gameState.currentMission = null;
         
+        // Check if other missions are already completed based on inventory
+        this.checkAllMissionsCompletion();
+        
         setTimeout(() => {
             this.showMissionStatus();
             if (this.gameState.completedMissions.length >= 3 && !this.gameState.mainMissionUnlocked) {
@@ -630,6 +794,54 @@ class TextAdventure {
                 }, 3000);
             }
         }, 2000);
+    }
+    
+    checkAllMissionsCompletion() {
+        const allMissions = [
+            {
+                id: 1,
+                type: "collection",
+                target: "energy cell",
+                requiredCount: 3,
+                title: "POWER GRID STABILIZATION"
+            },
+            {
+                id: 2,
+                type: "collection", 
+                target: "access card",
+                requiredCount: 1,
+                title: "SECURITY CLEARANCE ACQUISITION"
+            },
+            {
+                id: 3,
+                type: "action",
+                target: "repair kit", 
+                requiredCount: 3,
+                title: "CONTAINMENT PROTOCOL ACTIVATION"
+            }
+        ];
+        
+        allMissions.forEach(mission => {
+            // Check if this mission is already completed
+            const alreadyCompleted = this.gameState.completedMissions.some(completed => completed.id === mission.id);
+            if (alreadyCompleted) return;
+            
+            // Check if player has enough items for this mission (works for both collection and action types)
+            const count = this.gameState.inventory.filter(item => item === mission.target).length;
+            if (count >= mission.requiredCount) {
+                // Auto-complete this mission
+                const completeMission = {
+                    id: mission.id,
+                    icon: mission.id === 1 ? "⚡" : mission.id === 2 ? "🔐" : "🛡️",
+                    title: mission.title,
+                    reward: "Auto-completed based on inventory"
+                };
+                
+                this.gameState.completedMissions.push(completeMission);
+                this.typeColoredText(`\n🎉 ${mission.title} - AUTO-COMPLETED! You already had the required items.`, 'text-yellow');
+                this.gameState.score += 100;
+            }
+        });
     }
 
     move(direction) {
@@ -645,7 +857,9 @@ class TextAdventure {
         setTimeout(() => {
             // Move to the connected location
             this.gameState.currentLocationId = currentLoc.connections[direction];
+            this.gameState.visitedRooms.add(this.gameState.currentLocationId); // Track visited rooms
             this.lookAround();
+            this.updateMap(); // Update map display
         }, 1000);
     }
     
@@ -661,7 +875,7 @@ class TextAdventure {
 
     lookAround() {
         const loc = this.worldMap.get(this.gameState.currentLocationId);
-        let description = `\n=== ${loc.name} ===\n`;
+        let description = `\n=== ${loc.name} #${this.gameState.currentLocationId} ===\n`;
         description += `${loc.description}\n\n`;
         
         if (loc.items.length > 0) {
@@ -677,7 +891,13 @@ class TextAdventure {
         if (this.gameState.inventory.length === 0) {
             this.typeText("\nYour inventory is empty.", 20);
         } else {
-            this.typeText("\nInventory: " + this.gameState.inventory.join(", "), 20);
+            let inventoryText = "\nInventory:\n";
+            this.gameState.inventory.forEach((item, index) => {
+                const letter = String.fromCharCode(65 + index); // A, B, C, etc.
+                inventoryText += `  [${letter}] ${item}\n`;
+            });
+            inventoryText += "\nPress the letter to use an item.";
+            this.typeText(inventoryText, 20);
         }
     }
 
@@ -688,10 +908,9 @@ class TextAdventure {
     ╠═══════════════════════════════════════════════════════════╣
     ║ ARROW KEYS: Move (North/South/East/West)                  ║
     ║ SPACE: Use/Interact with objects                          ║
-    ║ G: Get/Take items from location                           ║
+    ║ T: Take items from location                               ║
     ║ D: Drop items from inventory                              ║
     ║ L: Look around current location                           ║
-    ║ X: Examine surroundings carefully                         ║
     ║ I: Check inventory                                        ║
     ║ M: Show mission status and progress                       ║
     ║ H: Show this help                                         ║
@@ -718,47 +937,31 @@ class TextAdventure {
     `, 20);
     }
 
-    typeText(text, speed = 2) {
+    typeText(text, speed = 0) {
         // Clear any existing typing animation
         if (this.currentTypeInterval) {
             clearInterval(this.currentTypeInterval);
+            this.currentTypeInterval = null;
         }
         
-        let i = 0;
-        this.currentTypeInterval = setInterval(() => {
-            if (i < text.length) {
-                this.output.textContent += text.charAt(i);
-                this.scrollToBottom();
-                i++;
-            } else {
-                clearInterval(this.currentTypeInterval);
-                this.currentTypeInterval = null;
-            }
-        }, speed);
+        // Instant text display - no animation
+        this.output.textContent += text;
+        this.scrollToBottom();
     }
 
-    typeColoredText(text, colorClass = 'text-green', speed = 2) {
+    typeColoredText(text, colorClass = 'text-green', speed = 0) {
         // Clear any existing typing animation
         if (this.currentTypeInterval) {
             clearInterval(this.currentTypeInterval);
+            this.currentTypeInterval = null;
         }
         
         const span = document.createElement('span');
         span.className = colorClass;
         span.style.whiteSpace = 'pre-wrap';
+        span.textContent = text; // Instant text display
         this.output.appendChild(span);
-        
-        let i = 0;
-        this.currentTypeInterval = setInterval(() => {
-            if (i < text.length) {
-                span.textContent += text.charAt(i);
-                this.scrollToBottom();
-                i++;
-            } else {
-                clearInterval(this.currentTypeInterval);
-                this.currentTypeInterval = null;
-            }
-        }, speed);
+        this.scrollToBottom();
     }
 
     showMissionStatus() {
@@ -776,15 +979,27 @@ class TextAdventure {
         const hasDataPad = this.gameState.inventory.includes('data pad');
         const currentObjective = hasDataPad ? 'Use data pad (press A) for mission details' : 'Find data pad for mission details';
         
+        // Calculate proper spacing for 54-character width
+        const completedText = `Sub-missions completed: ${completed}/${total}`;
+        const progressText = `Progress: [${'█'.repeat(Math.floor(progressPercent/10))}${' '.repeat(10-Math.floor(progressPercent/10))}] ${Math.floor(progressPercent)}%`;
+        const objectiveText = `Current Objective: ${currentObjective}`;
+        const statusTextLine = `Status: ${statusText}`;
+        
+        // Ensure spacing calculations don't go negative
+        const completedSpacing = Math.max(0, 52 - completedText.length);
+        const progressSpacing = Math.max(0, 52 - progressText.length);
+        const objectiveSpacing = Math.max(0, 52 - objectiveText.length);
+        const statusSpacing = Math.max(0, 52 - statusTextLine.length);
+        
         this.typeColoredText(`
-    ╔═══════════════════ MISSION STATUS ═══════════════════╗
-    ║ Sub-missions completed: ${completed}/${total}${' '.repeat(22 - `${completed}/${total}`.length)}║
-    ║ Progress: [${'█'.repeat(Math.floor(progressPercent/10))}${' '.repeat(10-Math.floor(progressPercent/10))}] ${Math.floor(progressPercent)}%${' '.repeat(5 - Math.floor(progressPercent).toString().length)}║
+    ╔══════════════════════════════════════════════════════╗
+    ║ ${completedText}${' '.repeat(completedSpacing)} ║
+    ║ ${progressText}${' '.repeat(progressSpacing)} ║
     ║${' '.repeat(54)}║
-    ║ Current Objective: ${currentObjective}${' '.repeat(54 - currentObjective.length)}║
-    ║ Status: ${statusText}${' '.repeat(54 - statusText.length)}║
+    ║ ${objectiveText}${' '.repeat(objectiveSpacing)} ║
+    ║ ${statusTextLine}${' '.repeat(statusSpacing)} ║
     ╚══════════════════════════════════════════════════════╝
-        `, 'text-cyan', 20);
+        `, 'text-cyan');
     }
 
     clearScreen() {
