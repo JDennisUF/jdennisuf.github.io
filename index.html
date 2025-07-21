@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jason Dennis - Portfolio & Web Applications</title>
+    <meta name="description" content="Explore interactive web applications including music generators, games, diagnostic tools, and learning apps.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="jingler/images/jinglerlogo.webp">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --music-gradient: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+            --dark: #1a1a2e;
+            --darker: #16213e;
+            --text-light: #ffffff;
+            --text-muted: #a0a0a0;
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --card-border: rgba(255, 255, 255, 0.2);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--primary-gradient);
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .github-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Applications Grid */
+        .apps-section {
+            padding: 80px 0;
+            background: var(--darker);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 3rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .app-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2rem;
+            text-decoration: none;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .app-card:hover::before {
+            left: 100%;
+        }
+
+        .app-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .app-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .app-card .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .app-card p {
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tech-tag {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Special styling for each app */
+        .app-card.jingler {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(78, 205, 196, 0.1) 100%);
+        }
+
+        .app-card.text-adventure {
+            background: linear-gradient(135deg, rgba(0, 255, 0, 0.1) 0%, rgba(0, 100, 0, 0.1) 100%);
+        }
+
+        .app-card.icdiags {
+            background: linear-gradient(135deg, rgba(102, 51, 153, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%);
+        }
+
+        .app-card.flashcards {
+            background: linear-gradient(135deg, rgba(147, 112, 219, 0.1) 0%, rgba(72, 61, 139, 0.1) 100%);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .header p {
+                font-size: 1.1rem;
+            }
+
+            .apps-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .app-card {
+                padding: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .app-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .app-card:nth-child(1) { animation-delay: 0.1s; }
+        .app-card:nth-child(2) { animation-delay: 0.2s; }
+        .app-card:nth-child(3) { animation-delay: 0.3s; }
+        .app-card:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>Jason Dennis</h1>
+                <p>Portfolio & Interactive Web Applications</p>
+                <a href="https://github.com/jdennisuf/jdennisuf.github.io" class="github-link" target="_blank">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    View on GitHub
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Applications Section -->
+    <section class="apps-section">
+        <div class="container">
+            <h2 class="section-title">Explore My Applications</h2>
+            
+            <div class="apps-grid">
+                <!-- Jingler -->
+                <a href="/jingler/" class="app-card jingler">
+                    <img src="jingler/images/jinglerlogo.webp" alt="Jingler Logo" class="app-icon">
+                    <h3>🎵 Jingler</h3>
+                    <div class="subtitle">The Jingle Maker</div>
+                    <p>Create random, single-measure musical phrases with professional audio synthesis and real-time musical notation. Features 15 scales, 6 synthesizer types, and jingle management.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Tone.js</span>
+                        <span class="tech-tag">VexFlow</span>
+                        <span class="tech-tag">JavaScript</span>
+                    </div>
+                </a>
+
+                <!-- Text Adventure -->
+                <a href="/text-adventure/" class="app-card text-adventure">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #00ff00 0%, #006400 100%); display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                        🎮
+                    </div>
+                    <h3>🎮 Text Adventure</h3>
+                    <div class="subtitle">Sci-Fi Emergency Response</div>
+                    <p>Immersive browser-based game with procedural generation, terminal aesthetics, and mission-based gameplay. Navigate through a research facility to contain a security breach.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">HTML5</span>
+                        <span class="tech-tag">CSS3</span>
+                    </div>
+                </a>
+
+                <!-- ICD Diagnostics -->
+                <a href="/icdiags/" class="app-card icdiags">
+                    <img src="icdiags/favicon.png" alt="ICD Diagnostics" class="app-icon">
+                    <h3>🏥 ICD Diagnostics</h3>
+                    <div class="subtitle">Medical Code Search</div>
+                    <p>Comprehensive search tool for ICD-10 diagnostic codes with voice input capabilities. Fast, responsive interface with client-side SQLite database.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Blazor</span>
+                        <span class="tech-tag">C#</span>
+                        <span class="tech-tag">SQLite</span>
+                    </div>
+                </a>
+
+                <!-- Flashcards -->
+                <a href="/flashcards/" class="app-card flashcards">
+                    <img src="flashcards/assets/assets/images/ubiflash_logo.png" alt="UbiFlash Logo" class="app-icon">
+                    <h3>📚 UbiFlash</h3>
+                    <div class="subtitle">Interactive Flashcards</div>
+                    <p>Learning application with multiple subject categories including Spanish, Science, Geography, and more. Progressive learning system with mobile-responsive design.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Flutter</span>
+                        <span class="tech-tag">Dart</span>
+                        <span class="tech-tag">PWA</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Jason Dennis. All rights reserved.</p>
+            <p>Built with passion for web development and creative applications.</p>
+        </div>
+    </footer>
+</body>
+</html>
