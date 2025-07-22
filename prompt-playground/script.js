@@ -2,12 +2,14 @@ class AIPromptPlayground {
     constructor() {
         this.messages = [];
         this.apiKey = '';
-        this.currentModel = 'mistralai/Devstral-Small-2507';
+        this.currentModel = 'meta-llama/Meta-Llama-3-8B-Instruct';
         this.temperature = 0.7;
         this.maxTokens = 150;
         this.theme = 'light';
+        this.availableModels = [];
         
         this.initializeElements();
+        this.loadModels();
         this.loadSettings();
         this.bindEvents();
         this.loadConversationHistory();
@@ -41,13 +43,43 @@ class AIPromptPlayground {
         this.quickPrompts = document.querySelectorAll('.quick-prompt');
     }
 
+    async loadModels() {
+        try {
+            const response = await fetch('./ai_models.json');
+            const data = await response.json();
+            this.availableModels = data.models;
+            this.populateModelSelect();
+        } catch (error) {
+            console.error('Failed to load models:', error);
+            // Fallback to default model
+            this.availableModels = [{
+                name: 'Meta Llama 3 8B Instruct',
+                id: 'meta-llama/Meta-Llama-3-8B-Instruct',
+                url: 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct',
+                tested: true,
+                recommended: true
+            }];
+            this.populateModelSelect();
+        }
+    }
+
+    populateModelSelect() {
+        this.modelSelect.innerHTML = '';
+        this.availableModels.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model.id;
+            option.textContent = model.name + (model.recommended ? ' (Recommended)' : '');
+            this.modelSelect.appendChild(option);
+        });
+    }
+
     loadSettings() {
         // Load from localStorage
         const savedSettings = localStorage.getItem('aiPlaygroundSettings');
         if (savedSettings) {
             const settings = JSON.parse(savedSettings);
             this.apiKey = settings.apiKey || '';
-            this.currentModel = settings.model || 'mistralai/Devstral-Small-2507';
+            this.currentModel = settings.model || 'meta-llama/Meta-Llama-3-8B-Instruct';
             this.temperature = settings.temperature || 0.7;
             this.maxTokens = settings.maxTokens || 150;
             this.theme = settings.theme || 'light';

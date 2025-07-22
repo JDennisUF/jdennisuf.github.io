@@ -1,0 +1,11 @@
+{
+  "models": [
+    {
+      "name": "Meta Llama 3 8B Instruct",
+      "id": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "url": "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct",
+      "tested": true,
+      "recommended": true
+    }
+  ]
+}
