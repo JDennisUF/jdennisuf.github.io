@@ -18,7 +18,17 @@
                     <span class="title-icon">🤖</span>
                     AI Prompt Playground
                 </h1>
+                <div class="current-model" id="currentModelDisplay">
+                    <span class="model-label">Model:</span>
+                    <span class="model-name" id="currentModelName">None Selected</span>
+                </div>
                 <div class="header-controls">
+                    <button id="clearHistory" class="btn btn-danger" title="Clear conversation history">
+                        🗑️ Clear History
+                    </button>
+                    <button id="exportChat" class="btn btn-secondary" title="Export conversation">
+                        📄 Export Chat
+                    </button>
                     <button id="settingsBtn" class="btn btn-secondary" title="Settings">
                         ⚙️ Settings
                     </button>
@@ -33,10 +43,10 @@
             <div class="settings-content">
                 <h3>Configuration</h3>
                 <div class="form-group">
-                    <label for="apiKey">Hugging Face API Key (Required)</label>
-                    <input type="password" id="apiKey" placeholder="hf_..." 
-                           title="Get your free API key from huggingface.co/settings/tokens">
-                    <small>Required - Get your free token from huggingface.co/settings/tokens</small>
+                    <label for="apiKey">OpenRouter API Key (Required)</label>
+                    <input type="text" id="apiKey" placeholder="sk-or-v1-..." 
+                           title="Get your free API key from openrouter.ai">
+                    <small>Required - Get your free API key from openrouter.ai (register and generate key)</small>
                 </div>
                 <div class="form-group">
                     <label for="modelSelect">Model</label>
@@ -52,12 +62,8 @@
                     </div>
                     <div class="form-group">
                         <label for="maxTokens">Max Tokens</label>
-                        <input type="number" id="maxTokens" min="50" max="2048" value="150">
+                        <input type="number" id="maxTokens" min="50" max="4000" value="1000">
                     </div>
-                </div>
-                <div class="form-actions">
-                    <button id="clearHistory" class="btn btn-danger">Clear History</button>
-                    <button id="exportChat" class="btn btn-secondary">Export Chat</button>
                 </div>
             </div>
         </div>
@@ -73,7 +79,7 @@
                             <li><strong>User:</strong> Ask questions or give commands</li>
                             <li><strong>Assistant:</strong> Preview AI responses or add context</li>
                         </ul>
-                        <p class="api-note">🔑 Get your free API key from huggingface.co/settings/tokens (requires "Write" permissions)</p>
+                        <p class="api-note">🔑 Get your free API key from openrouter.ai (free registration required)</p>
                     </div>
                 </div>
 
@@ -129,8 +135,8 @@
 
         <footer class="footer">
             <p>&copy; 2025 AI Prompt Playground | 
-                <a href="https://huggingface.co/docs/api-inference/quicktour" target="_blank">
-                    Powered by Hugging Face
+                <a href="https://openrouter.ai" target="_blank">
+                    Powered by OpenRouter
                 </a>
             </p>
         </footer>

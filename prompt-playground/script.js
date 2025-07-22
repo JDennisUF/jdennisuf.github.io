@@ -4,15 +4,16 @@ class AIPromptPlayground {
         this.apiKey = '';
         this.currentModel = 'meta-llama/Meta-Llama-3-8B-Instruct';
         this.temperature = 0.7;
-        this.maxTokens = 150;
+        this.maxTokens = 1000;
         this.theme = 'light';
         this.availableModels = [];
         
         this.initializeElements();
-        this.loadModels();
-        this.loadSettings();
         this.bindEvents();
-        this.loadConversationHistory();
+        this.loadModels().then(() => {
+            this.loadSettings();
+            this.loadConversationHistory();
+        });
     }
 
     initializeElements() {
@@ -38,6 +39,7 @@ class AIPromptPlayground {
         this.clearHistoryBtn = document.getElementById('clearHistory');
         this.exportChatBtn = document.getElementById('exportChat');
         this.clearInputBtn = document.getElementById('clearInput');
+        this.currentModelName = document.getElementById('currentModelName');
         
         // Quick prompts
         this.quickPrompts = document.querySelectorAll('.quick-prompt');
@@ -53,10 +55,10 @@ class AIPromptPlayground {
             console.error('Failed to load models:', error);
             // Fallback to default model
             this.availableModels = [{
-                name: 'Meta Llama 3 8B Instruct',
-                id: 'meta-llama/Meta-Llama-3-8B-Instruct',
-                url: 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct',
-                tested: true,
+                name: 'GPT-2 (OpenAI)',
+                id: 'gpt2',
+                url: 'https://api-inference.huggingface.co/models/gpt2',
+                tested: false,
                 recommended: true
             }];
             this.populateModelSelect();
@@ -79,10 +81,17 @@ class AIPromptPlayground {
         if (savedSettings) {
             const settings = JSON.parse(savedSettings);
             this.apiKey = settings.apiKey || '';
-            this.currentModel = settings.model || 'meta-llama/Meta-Llama-3-8B-Instruct';
+            // Check if saved model exists in available models
+            const savedModel = settings.model;
+            const modelExists = savedModel && this.availableModels.some(m => m.id === savedModel);
+            this.currentModel = modelExists ? savedModel : '';
             this.temperature = settings.temperature || 0.7;
-            this.maxTokens = settings.maxTokens || 150;
+            this.maxTokens = settings.maxTokens || 1000;
             this.theme = settings.theme || 'light';
+        } else {
+            // No saved settings, select first recommended model
+            const recommendedModel = this.availableModels.find(m => m.recommended);
+            this.currentModel = recommendedModel ? recommendedModel.id : (this.availableModels[0]?.id || '');
         }
 
         // Apply settings to UI
@@ -92,8 +101,20 @@ class AIPromptPlayground {
         this.temperatureValue.textContent = this.temperature;
         this.maxTokensInput.value = this.maxTokens;
         
+        // Update model display
+        this.updateModelDisplay();
+        
         // Apply theme
         this.applyTheme();
+    }
+
+    updateModelDisplay() {
+        if (this.currentModel) {
+            const selectedModel = this.availableModels.find(m => m.id === this.currentModel);
+            this.currentModelName.textContent = selectedModel ? selectedModel.name : this.currentModel;
+        } else {
+            this.currentModelName.textContent = 'None Selected';
+        }
     }
 
     saveSettings() {
@@ -149,6 +170,7 @@ class AIPromptPlayground {
 
         this.modelSelect.addEventListener('change', (e) => {
             this.currentModel = e.target.value;
+            this.updateModelDisplay();
             this.saveSettings();
         });
 
@@ -327,7 +349,7 @@ class AIPromptPlayground {
                     <li><strong>User:</strong> Ask questions or give commands</li>
                     <li><strong>Assistant:</strong> Preview AI responses or add context</li>
                 </ul>
-                <p class="api-note">🔑 API key required from huggingface.co/settings/tokens</p>
+                <p class="api-note">🔑 API key required from openrouter.ai</p>
             </div>
         `;
     }
@@ -337,7 +359,11 @@ class AIPromptPlayground {
 
         try {
             if (!this.apiKey) {
-                throw new Error('API key required. Enter your Hugging Face token in Settings.');
+                throw new Error('API key required. Enter your OpenRouter API key in Settings.');
+            }
+            
+            if (!this.currentModel) {
+                throw new Error('Please select a model in Settings before sending messages.');
             }
             
             const response = await this.callHuggingFaceAPI(prompt);
@@ -354,29 +380,37 @@ class AIPromptPlayground {
         // Sanitize inputs for Firefox compatibility
         const sanitizedPrompt = this.sanitizeForAPI(prompt);
         const sanitizedApiKey = this.sanitizeForAPI(this.apiKey);
-        
+        console.log('Sanitized API Key:', sanitizedApiKey);
+        console.log('Sanitized Prompt:', sanitizedPrompt);
+
         if (!sanitizedApiKey || sanitizedApiKey.length < 10) {
-            throw new Error('Invalid API key format. Please check your Hugging Face token.');
+            throw new Error('Invalid API key format. Please check your OpenRouter API key.');
         }
 
-        const response = await fetch(`https://api-inference.huggingface.co/models/${this.currentModel}`, {
+        // Use new Inference Providers API format
+        const payload = {
+            model: this.currentModel,
+            messages: [
+                {
+                    role: "user",
+                    content: sanitizedPrompt
+                }
+            ],
+            max_tokens: this.maxTokens,
+            temperature: this.temperature
+        };
+
+        const apiUrl = `https://openrouter.ai/api/v1/chat/completions`;
+        console.log('API URL being called:', apiUrl);
+        console.log('Payload being sent:', JSON.stringify(payload, null, 2));
+        
+        const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${sanitizedApiKey}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                inputs: sanitizedPrompt,
-                parameters: {
-                    max_new_tokens: Math.min(this.maxTokens, 200),
-                    temperature: this.temperature,
-                    return_full_text: false
-                },
-                options: {
-                    wait_for_model: true,
-                    use_cache: false
-                }
-            })
+            body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
@@ -411,7 +445,19 @@ class AIPromptPlayground {
             throw new Error(data.error);
         }
 
-        // Handle response formats
+        // Handle new chat completions format
+        if (data.choices && data.choices.length > 0) {
+            const choice = data.choices[0];
+            if (choice.message) {
+                // DeepSeek R1 models put content in 'reasoning' field
+                const content = choice.message.content || choice.message.reasoning || '';
+                if (content.trim()) {
+                    return content.trim();
+                }
+            }
+        }
+        
+        // Fallback for other formats
         if (Array.isArray(data) && data.length > 0) {
             const result = data[0];
             if (typeof result === 'object' && result.generated_text) {
@@ -446,11 +492,9 @@ class AIPromptPlayground {
     }
 
     clearHistory() {
-        if (confirm('Are you sure you want to clear the conversation history?')) {
-            this.messages = [];
-            this.renderMessages();
-            this.saveConversationHistory();
-        }
+        this.messages = [];
+        this.renderMessages();
+        this.saveConversationHistory();
     }
 
     exportConversation() {

@@ -1,10 +1,17 @@
 {
   "models": [
     {
-      "name": "Meta Llama 3 8B Instruct",
-      "id": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "url": "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct",
-      "tested": true,
+      "name": "DeepSeek R1 (Free)",
+      "id": "deepseek/deepseek-r1:free",
+      "url": "https://openrouter.ai/api/v1/chat/completions",
+      "tested": false,
+      "recommended": true
+    },
+    {
+      "name": "DeepSeek R1 Distill 70B (Free)",
+      "id": "deepseek/deepseek-r1-distill-llama-70b:free",
+      "url": "https://openrouter.ai/api/v1/chat/completions",
+      "tested": false,
       "recommended": true
     }
   ]
