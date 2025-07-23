@@ -279,7 +279,7 @@ body {
 .main {
     display: flex;
     flex-direction: column;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: var(--space-lg);
     width: 100%;
@@ -292,6 +292,85 @@ body {
     flex-direction: column;
     min-height: 400px;
     margin-bottom: var(--space-lg);
+}
+
+/* Split screen layout for dual models */
+.chat-container.dual-mode {
+    flex-direction: row;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+
+.messages-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-container.dual-mode .messages-panel {
+    flex: 1;
+    min-width: 0; /* Prevent overflow */
+    max-width: none; /* Allow full expansion */
+}
+
+.second-panel {
+    border-left: 2px solid var(--border-color);
+    padding-left: var(--space-sm);
+}
+
+/* Make messages containers wider in dual mode */
+.chat-container.dual-mode .messages {
+    min-width: 400px;
+}
+
+/* Model titles above response panels */
+.model-title {
+    font-weight: 600;
+    font-size: 1.1em;
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-bottom: none;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: var(--space-sm) var(--space-md);
+    margin-bottom: 0;
+    text-align: center;
+    display: block; /* Always show model titles */
+}
+
+/* Adjust messages border radius when title is shown */
+.messages {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+/* Shared question area for dual mode */
+.shared-question {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.question-display {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.question-display::before {
+    content: "👤";
+    font-size: 1.2em;
+}
+
+.question-display .question-content {
+    flex: 1;
+    padding: var(--space-sm);
+    background: var(--bg-chat);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
 }
 
 .messages {
