@@ -228,6 +228,60 @@
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
         }
 
+        /* Site Links Section */
+        .site-links-section {
+            padding: 60px 0;
+            background: var(--dark);
+        }
+
+        .site-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .site-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            text-decoration: none;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .site-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .site-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: contain;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px;
+        }
+
+        .site-info h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .site-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
         /* Footer */
         .footer {
             background: var(--dark);
@@ -341,8 +395,8 @@
 
                 <!-- ICD Diagnostics -->
                 <a href="/icdiags/" class="app-card icdiags">
-                    <img src="icdiags/favicon.png" alt="ICD Diagnostics" class="app-icon">
-                    <h3>🏥 ICD Diagnostics</h3>
+                    <img src="icdiags/favicon.png" alt="ICDiags" class="app-icon">
+                    <h3>🏥 ICDiags</h3>
                     <div class="subtitle">Medical Code Search</div>
                     <p>Comprehensive search tool for ICD-10 diagnostic codes with voice input capabilities. Fast, responsive interface with client-side SQLite database.</p>
                     <div class="tech-tags">
@@ -383,12 +437,56 @@
         </div>
     </section>
 
+    <!-- Site Links Section -->
+    <section class="site-links-section">
+        <div class="container">
+            <h2 class="section-title">Useful Sites & Tools</h2>
+            <div class="site-links-grid" id="siteLinksGrid">
+                <!-- Links will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2024 Jason Dennis. All rights reserved.</p>
-            <p>Built with passion for web development and creative applications.</p>
+            <p>&copy; 2025 Jason Dennis. All rights reserved.</p>
+            <p>Built with ❤️</p>
         </div>
     </footer>
+
+    <script>
+        // Load site links from JSON
+        async function loadSiteLinks() {
+            try {
+                const response = await fetch('site_links.json');
+                const siteLinks = await response.json();
+                const grid = document.getElementById('siteLinksGrid');
+                
+                siteLinks.forEach(site => {
+                    const linkElement = document.createElement('a');
+                    linkElement.href = site.url;
+                    linkElement.className = 'site-link';
+                    linkElement.target = '_blank';
+                    linkElement.rel = 'noopener noreferrer';
+                    
+                    linkElement.innerHTML = `
+                        <img src="${site.logo}" alt="${site.name} Logo" class="site-logo" onerror="this.style.display='none'">
+                        <div class="site-info">
+                            <h4>${site.name}</h4>
+                            <p>${site.description}</p>
+                        </div>
+                    `;
+                    
+                    grid.appendChild(linkElement);
+                });
+            } catch (error) {
+                console.error('Error loading site links:', error);
+            }
+        }
+        
+        // Load site links when page loads
+        document.addEventListener('DOMContentLoaded', loadSiteLinks);
+    </script>
 </body>
 </html>

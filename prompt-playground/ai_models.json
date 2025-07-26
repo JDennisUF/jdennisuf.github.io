@@ -5,67 +5,60 @@
       "id": "deepseek/deepseek-r1:free",
       "url": "https://openrouter.ai/api/v1/chat/completions",
       "tested": false,
-      "recommended": true
+      "recommended": false
     },
     {
       "name": "DeepSeek R1 Distill 70B (Free)",
       "id": "deepseek/deepseek-r1-distill-llama-70b:free",
       "url": "https://openrouter.ai/api/v1/chat/completions",
-      "tested": false,
+      "tested": true,
       "recommended": true
     },
     {
-      "name": "Meta Llama 4 Maverick (Free)",
-      "id": "meta-llama/llama-4-maverick:free",
+      "name": "Meta Llama 3.3 70B (Free)",
+      "id": "meta-llama/llama-3.3-70b-instruct:free",
       "url": "https://openrouter.ai/api/v1/chat/completions",
-      "tested": false,
+      "tested": true,
+      "recommended": true
+    },
+    {
+      "name": "DeepSeek Chat V3 (Free)",
+      "id": "deepseek/deepseek-chat-v3-0324:free",
+      "url": "https://openrouter.ai/api/v1/chat/completions",
+      "tested": true,
+      "recommended": true
+    },
+    {
+      "name": "Qwen QwQ 32B (Free)",
+      "id": "qwen/qwq-32b:free",
+      "url": "https://openrouter.ai/api/v1/chat/completions",
+      "tested": true,
       "recommended": false
     },
     {
-      "name": "Meta Llama 4 Scout (Free)",
-      "id": "meta-llama/llama-4-scout:free",
+      "name": "DeepSeek R1 (Free)",
+      "id": "deepseek/deepseek-r1:free",
       "url": "https://openrouter.ai/api/v1/chat/completions",
-      "tested": false,
+      "tested": true,
       "recommended": false
     },
     {
       "name": "Google Gemini 2.0 Flash Exp (Free)",
       "id": "google/gemini-2.0-flash-exp:free",
       "url": "https://openrouter.ai/api/v1/chat/completions",
-      "tested": false,
+      "tested": true,
       "recommended": false
     },
     {
-      "name": "Google Gemini 2.5 Pro Exp (Free)",
-      "id": "google/gemini-2.5-pro-exp-03-25:free",
+      "name": "Mistral Small 3.1 24B (Free)",
+      "id": "mistralai/mistral-small-3.1-24b-instruct:free",
       "url": "https://openrouter.ai/api/v1/chat/completions",
       "tested": false,
-      "recommended": false
+      "recommended": true
     },
     {
-      "name": "DeepSeek V3 Base (Free)",
-      "id": "deepseek/deepseek-v3-base:free",
-      "url": "https://openrouter.ai/api/v1/chat/completions",
-      "tested": false,
-      "recommended": false
-    },
-    {
-      "name": "Qwen 2.5 Coder 32B (Free)",
-      "id": "qwen/qwen-2.5-coder-32b-instruct:free",
-      "url": "https://openrouter.ai/api/v1/chat/completions",
-      "tested": false,
-      "recommended": false
-    },
-    {
-      "name": "Nvidia Llama 3.1 8B (Free)",
-      "id": "nvidia/llama-3.1-nemotron-70b-instruct:free",
-      "url": "https://openrouter.ai/api/v1/chat/completions",
-      "tested": false,
-      "recommended": false
-    },
-    {
-      "name": "Hermes 3 Llama 3.1 8B (Free)",
-      "id": "nousresearch/hermes-3-llama-3.1-8b:free",
+      "name": "Google Gemma 3 27B (Free)",
+      "id": "google/gemma-3-27b-it:free",
       "url": "https://openrouter.ai/api/v1/chat/completions",
       "tested": false,
       "recommended": false

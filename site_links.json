@@ -1,0 +1,38 @@
+[
+  {
+    "name": "OpenAI",
+    "url": "https://openai.com",
+    "logo": "https://cdn.cdnlogo.com/logos/o/9/openai.svg",
+    "description": "AI research and deployment"
+  },
+  {
+    "name": "OpenRouter",
+    "url": "https://openrouter.ai",
+    "logo": "https://openrouter.ai/favicon.ico",
+    "description": "AI model router and API"
+  },
+  {
+    "name": "Supabase",
+    "url": "https://supabase.com",
+    "logo": "https://supabase.com/_next/image?url=%2Fimages%2Fbrand%2Fsupabase-logo-icon.png&w=96&q=75",
+    "description": "Open source Firebase alternative"
+  },
+  {
+    "name": "API Football",
+    "url": "https://api-football.com",
+    "logo": "https://api-football.com/public/img/logo.png",
+    "description": "Football/Soccer data API"
+  },
+  {
+    "name": "Hugging Face",
+    "url": "https://huggingface.co",
+    "logo": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
+    "description": "AI and ML community platform"
+  },
+  {
+    "name": "Anthropic Status",
+    "url": "https://status.anthropic.com",
+    "logo": "https://status.anthropic.com/favicon.ico",
+    "description": "Anthropic service status"
+  }
+]
