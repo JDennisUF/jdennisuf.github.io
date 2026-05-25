@@ -1,6 +1,6 @@
 # Jason Dennis - Portfolio & Web Applications
 
-Welcome to my collection of web applications and projects hosted on GitHub Pages! This repository showcases various interactive tools and games I've developed using different technologies.
+Welcome to my collection of web applications and projects hosted on GitHub Pages! This repository showcases various interactive tools I've developed using different technologies.
 
 ## 🚀 Live Applications
 
@@ -17,18 +17,6 @@ A modern web-based automatic jingle generator that creates random, single-measur
 - Jingle library with editing and PNG export
 
 **Tech Stack:** Tone.js, VexFlow, Vanilla JavaScript
-
-### 🎮 [Text Adventure Game](https://jdennisuf.github.io/text-adventure/)
-An immersive browser-based sci-fi emergency response game with procedural generation and terminal aesthetics.
-
-**Features:**
-- Procedurally generated locations
-- Mission-based gameplay with sub-objectives
-- Keyboard-driven controls
-- Terminal-style interface with typewriter effects
-- Inventory and health management
-
-**Tech Stack:** Vanilla JavaScript, HTML5, CSS3
 
 ### 🏥 [ICD Diagnostics](https://jdennisuf.github.io/icdiags/)
 A comprehensive search tool for ICD-10 diagnostic codes with voice input capabilities.
@@ -71,7 +59,6 @@ python3 -m http.server 8000
 ├── index.html          # Portfolio landing page
 ├── server.js           # Local development server
 ├── jingler/            # Music jingle generator
-├── text-adventure/     # Sci-fi adventure game
 ├── icdiags/           # ICD-10 diagnostic search
 ├── flashcards/        # Flutter flashcard app
 └── CLAUDE.md          # Development guidance

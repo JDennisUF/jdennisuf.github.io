@@ -7,7 +7,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a GitHub Pages repository containing multiple web applications and projects:
 
 - **Portfolio Site Root**: Static hosting for multiple web applications
-- **Text Adventure Game** (`/text-adventure/`): Browser-based sci-fi emergency response game
 - **Jingler** (`/jingler/`): Web-based automatic jingle generator with musical notation
 - **ICD Diagnostics** (`/icdiags/`): Blazor WebAssembly app for ICD-10 diagnostic code search
 - **Flashcards App** (`/flashcards/`): Flutter web app for interactive flashcard learning
@@ -31,9 +30,6 @@ npm install        # Install dependencies (vexflow)
 npm start          # Run application (starts jingler.js)
 ```
 
-### Text Adventure Game (`/text-adventure/`)
-No build process required - static HTML/CSS/JS files. Serve using any HTTP server.
-
 ### ICD Diagnostics (`/icdiags/`)
 Blazor WebAssembly application with pre-built output. No build commands available in current setup.
 
@@ -41,13 +37,6 @@ Blazor WebAssembly application with pre-built output. No build commands availabl
 Flutter web application with pre-built output. No build commands available in current setup.
 
 ## Code Architecture
-
-### Text Adventure Game
-- **Single-class architecture**: `TextAdventure` class in `game.js` handles all game logic
-- **Procedural generation**: Random locations with contextual descriptions and items
-- **Mission system**: Sequential sub-missions leading to main objective completion
-- **Keyboard-driven input**: Event-based controls with visual feedback
-- **Terminal aesthetic**: Monospace fonts, green-on-black styling, typewriter effects
 
 ### Jingler Music Generator
 - **Tone.js integration**: Web Audio API synthesis with 6 synthesizer types
@@ -79,7 +68,6 @@ The root level serves as a GitHub Pages hosting container with a simple Node.js 
 
 ## Key File Locations
 
-- Text Adventure: `text-adventure/game.js` (main game logic)
 - Jingler: `jingler/jingler.js` (music generation), `jingler/package.json` (dependencies)
 - ICD Diagnostics: `icdiags/index.html` (Blazor entry point)
 - Flashcards: `flashcards/index.html` (Flutter entry point)
