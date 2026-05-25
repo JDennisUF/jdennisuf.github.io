@@ -1,6 +1,6 @@
 # Jason Dennis - Portfolio & Web Applications
 
-Welcome to my collection of web applications and projects hosted on GitHub Pages! This repository showcases various interactive tools I've developed using different technologies.
+Welcome to my portfolio site for web applications and projects hosted on GitHub Pages. This repository contains the landing page and selected deployed app assets.
 
 ## 🚀 Live Applications
 
@@ -58,7 +58,6 @@ python3 -m http.server 8000
 ```
 ├── index.html          # Portfolio landing page
 ├── server.js           # Local development server
-├── jingler/            # Music jingle generator
 ├── icdiags/           # ICD-10 diagnostic search
 ├── flashcards/        # Flutter flashcard app
 └── CLAUDE.md          # Development guidance
@@ -67,7 +66,6 @@ python3 -m http.server 8000
 ## 🎯 Technologies Used
 
 - **Frontend Frameworks:** Flutter, Blazor WebAssembly
-- **Audio/Music:** Tone.js, VexFlow
 - **Languages:** JavaScript, Dart, C#
 - **Styling:** CSS3, Bootstrap, Material Design
 - **Database:** SQLite (client-side)

@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jason Dennis - Portfolio & Web Applications</title>
-    <meta name="description" content="Explore interactive web applications including music generators, games, diagnostic tools, and learning apps.">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="jingler/images/jinglerlogo.webp">
+    <meta name="description" content="Explore interactive web applications including diagnostic tools, learning apps, and creative projects.">
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -208,10 +205,6 @@
         }
 
         /* Special styling for each app */
-        .app-card.jingler {
-            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(78, 205, 196, 0.1) 100%);
-        }
-
         .app-card.icdiags {
             background: linear-gradient(135deg, rgba(102, 51, 153, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%);
         }
@@ -357,7 +350,9 @@
             <div class="apps-grid">
                 <!-- Jingler -->
                 <a href="/jingler/" class="app-card jingler">
-                    <img src="jingler/images/jinglerlogo.webp" alt="Jingler Logo" class="app-icon">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%); display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                        🎵
+                    </div>
                     <h3>🎵 Jingler</h3>
                     <div class="subtitle">The Jingle Maker</div>
                     <p>Create random, single-measure musical phrases with professional audio synthesis and real-time musical notation. Features 15 scales, 6 synthesizer types, and jingle management.</p>
